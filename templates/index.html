@@ -1,0 +1,661 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpyPop Payload Creator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      /* (Your existing styles unchanged) */
+      body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #1b1b1b;
+        color: #ffffff;
+        margin: 0;
+        padding: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+      }
+      .container {
+        background-color: #242424;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        width: 90%;
+        max-width: 500px;
+        border: 1px solid #3d3d3d;
+      }
+      h1 {
+        text-align: center;
+        color: #7fffd4;
+        font-size: 1.8em;
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+        text-shadow: 0 0 5px rgba(127, 255, 212, 0.5);
+      }
+      .title-icon {
+        display: inline-block;
+        margin-right: 10px;
+        color: #ffaa00;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: #cccccc;
+      }
+      .form-group input[type="text"],
+      .form-group input[type="number"],
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #4a4a4a;
+        border-radius: 4px;
+        background-color: #333333;
+        color: #ffffff;
+        box-sizing: border-box;
+        font-size: 1em;
+        appearance: none;
+      }
+      .form-group textarea {
+        resize: vertical;
+      }
+      .form-group input[type="file"] {
+        border: 1px solid #4a4a4a;
+        border-radius: 4px;
+        background-color: #333333;
+        padding: 8px 10px;
+        width: 100%;
+        color: #cccccc;
+        box-sizing: border-box;
+      }
+      .form-group input[type="file"]::file-selector-button {
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: none;
+        background-color: #4a4a4a;
+        color: #ffffff;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .form-group input[type="file"]::file-selector-button:hover {
+        background-color: #5a5a5a;
+      }
+      .action-button {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 700;
+        margin-top: 10px;
+        transition: background-color 0.3s;
+      }
+      .action-button:hover {
+        background-color: #45a049;
+      }
+      #create-payload-btn {
+        width: 100%;
+        padding: 15px;
+        background-color: #00bcd4;
+        color: #ffffff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1.1em;
+        font-weight: 700;
+        margin-top: 25px;
+        transition: background-color 0.3s, opacity 0.3s;
+      }
+      #create-payload-btn:hover {
+        background-color: #00a0b0;
+      }
+      #status-message {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 0.9em;
+        color: #7fffd4;
+        min-height: 20px;
+      }
+      #media-preview-container {
+        margin-top: 15px;
+        padding: 10px;
+        border: 1px dashed #4a4a4a;
+        border-radius: 4px;
+        background-color: #333333;
+        min-height: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #999999;
+        overflow: hidden;
+      }
+      #media-preview-container video,
+      #media-preview-container canvas {
+        width: 100%;
+        height: auto;
+        max-height: 150px;
+        object-fit: contain;
+        display: none;
+      }
+      #download-container {
+        margin-top: 20px;
+        padding-top: 10px;
+        border-top: 1px solid #333333;
+        text-align: center;
+      }
+      #download-payload-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #ffaa00;
+        color: #1b1b1b;
+        border: 2px solid #ffaa00;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 700;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        animation: pulse-glow 1.5s infinite alternate;
+      }
+      #download-payload-btn:hover {
+        background-color: #e09800;
+      }
+      @keyframes pulse-glow {
+        from {
+          box-shadow: 0 0 5px #ffaa00;
+        }
+        to {
+          box-shadow: 0 0 20px #ffaa00, 0 0 10px #ffaa00;
+        }
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1><span class="title-icon">🔒</span>SpyPop Payload Creator</h1>
+
+      <div class="form-group">
+        <label for="message-type">Message Type:</label>
+        <select id="message-type" onchange="updateFormInputs(this.value)">
+          <option value="text">Text (Manual/File)</option>
+          <option value="audio">Audio (Capture/File)</option>
+          <option value="video">Video (Capture/File)</option>
+          <option value="image">Image (Capture/File)</option>
+        </select>
+      </div>
+
+      <div id="text-input-group" class="form-group">
+        <label for="secret-text">Secret Text:</label>
+        <textarea id="secret-text" rows="3" placeholder="Enter secret message..."></textarea>
+
+        <div id="text-file-select" class="form-group hidden" style="margin-top: 10px;">
+          <label for="text-file">OR File (for Text/Doc/PDF):</label>
+          <input type="file" id="text-file" accept=".txt,.doc,.docx,.pdf" />
+        </div>
+
+        <button class="action-button" onclick="showTextOption('file')" id="btn-switch-text-file" style="background-color: #5a5a5a; margin-top: 8px;">Switch to File Upload</button>
+        <button class="action-button hidden" onclick="showTextOption('text')" id="btn-switch-text-input" style="background-color: #5a5a5a; margin-top: 8px;">Switch to Manual Input</button>
+      </div>
+
+      <div id="media-input-group" class="form-group hidden">
+        <div id="media-preview-container">
+          <span id="preview-text">Preview Area (Camera/Mic Standby)</span>
+          <audio id="media-audio-preview" controls class="hidden"></audio>
+          <video id="media-video-feed" autoplay playsinline muted></video>
+          <canvas id="media-canvas"></canvas>
+        </div>
+
+        <div id="capture-group">
+          <label id="capture-label">Capture Live Stream:</label>
+          <button class="action-button" id="capture-button" onclick="handleCaptureAction()">
+            <span id="capture-action-text">Start Capture</span>
+          </button>
+        </div>
+
+        <div id="storage-group" class="hidden" style="margin-top: 10px;">
+          <label id="file-label">Select File (for image/audio/video):</label>
+          <input type="file" id="media-file-input" />
+        </div>
+
+        <button class="action-button" onclick="switchMediaOption('storage')" id="btn-switch-media-file" style="background-color: #5a5a5a; margin-top: 8px;">Switch to File Upload</button>
+        <button class="action-button hidden" onclick="switchMediaOption('capture')" id="btn-switch-media-capture" style="background-color: #5a5a5a; margin-top: 8px;">Switch to Live Capture</button>
+      </div>
+
+      <div class="form-group">
+        <label for="custom-timer">Custom Timer (seconds, optional):</label>
+        <input type="number" id="custom-timer"  placeholder="e.g., 10" />
+      </div>
+
+      <button id="create-payload-btn" onclick="prepareAndUploadData()">Create Payload</button>
+
+      <div id="status-message">Creating payload...</div>
+
+      <div id="download-container" class="hidden">
+        <a id="download-link" href="#" download="spy_payload.zip" style="text-decoration: none;">
+          <button id="download-payload-btn">DOWNLOAD PROCESSED PAYLOAD</button>
+        </a>
+      </div>
+    </div>
+
+    <script>
+      // --- GLOBAL STATE ---
+      let currentStream = null;
+      let recordedChunks = [];
+      let mediaRecorder = null;
+      let currentMediaType = 'text';
+      let isRecording = false;
+      let capturedBlobs = { audio: null, video: null, image: null };
+
+      // DOM Elements
+      const textInputGroup = document.getElementById('text-input-group');
+      const mediaInputGroup = document.getElementById('media-input-group');
+      const mediaFileInput = document.getElementById('media-file-input');
+      const statusMessageEl = document.getElementById('status-message');
+      const captureButton = document.getElementById('capture-button');
+      const captureActionText = document.getElementById('capture-action-text');
+      const mediaPreviewContainer = document.getElementById('media-preview-container');
+      const previewText = document.getElementById('preview-text');
+      const mediaVideoFeed = document.getElementById('media-video-feed');
+      const mediaCanvas = document.getElementById('media-canvas');
+      const downloadContainer = document.getElementById('download-container');
+      const downloadLink = document.getElementById('download-link');
+
+      function updateFormInputs(type) {
+        currentMediaType = type;
+        stopMediaStream();
+        downloadContainer.classList.add('hidden');
+
+        textInputGroup.classList.add('hidden');
+        mediaInputGroup.classList.add('hidden');
+
+        document.getElementById('btn-switch-media-file').classList.remove('hidden');
+        document.getElementById('btn-switch-media-capture').classList.add('hidden');
+        document.getElementById('storage-group').classList.add('hidden');
+        document.getElementById('capture-group').classList.remove('hidden');
+
+        mediaFileInput.value = '';
+        document.getElementById('text-file').value = '';
+
+        statusMessageEl.textContent = '. . .';
+
+        if (type === 'text') {
+          textInputGroup.classList.remove('hidden');
+          showTextOption('text');
+        } else {
+          mediaInputGroup.classList.remove('hidden');
+          switchMediaOption('capture');
+
+          const fileAccepts = { audio: 'audio/*', video: 'video/*', image: 'image/*' };
+          const captureLabels = {
+            audio: 'Capture Live Audio (Mic):',
+            video: 'Capture Live Video (Cam):',
+            image: 'Capture Live Image (Cam):',
+          };
+          const actionTexts = { audio: 'Start Recording', video: 'Start Recording', image: 'Take Photo' };
+
+          mediaFileInput.accept = fileAccepts[type];
+          document.getElementById('capture-label').textContent = captureLabels[type];
+          captureActionText.textContent = actionTexts[type];
+          document.getElementById('file-label').textContent = `OR File (for ${type}):`;
+        }
+      }
+
+      function showTextOption(option) {
+        const isInput = option === 'text';
+        document.getElementById('secret-text').classList.toggle('hidden', !isInput);
+        document.getElementById('text-file-select').classList.toggle('hidden', isInput);
+        document.getElementById('btn-switch-text-file').classList.toggle('hidden', !isInput);
+        document.getElementById('btn-switch-text-input').classList.toggle('hidden', isInput);
+      }
+
+      function switchMediaOption(option) {
+        const isCapture = (option === 'capture');
+
+        document.getElementById('capture-group').classList.toggle('hidden', !isCapture);
+        document.getElementById('storage-group').classList.toggle('hidden', isCapture);
+        document.getElementById('btn-switch-media-file').classList.toggle('hidden', !isCapture);
+        document.getElementById('btn-switch-media-capture').classList.toggle('hidden', isCapture);
+
+        if (!isCapture) {
+          stopMediaStream();
+          mediaPreviewContainer.style.display = 'none';
+        } else {
+          mediaPreviewContainer.style.display = 'flex';
+          previewText.textContent = 'Preview Area (Camera/Mic Standby)';
+          previewText.style.display = 'block';
+          captureActionText.textContent = (currentMediaType === 'image' ? 'Take Photo' : 'Start Recording');
+          captureButton.style.backgroundColor = '#4CAF50';
+        }
+      }
+
+      function stopMediaStream() {
+        isRecording = false;
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          currentStream = null;
+        }
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+        }
+        mediaVideoFeed.style.display = 'none';
+        mediaVideoFeed.srcObject = null;
+        mediaCanvas.style.display = 'none';
+        previewText.style.display = 'block';
+        recordedChunks = [];
+
+        document.getElementById('media-audio-preview').classList.add('hidden');
+        document.getElementById('media-audio-preview').src = '';
+        mediaVideoFeed.src = '';
+        mediaVideoFeed.controls = false;
+
+      }
+
+      async function handleCaptureAction() {
+        if (isRecording) {
+          // Stop media recording
+          stopRecording();  // this handles preview and stopping recorder/stream
+        } else {
+          // Start capture depending on media type
+          if (currentMediaType === 'image') {
+            await startImageCapture();
+          } else if (currentMediaType === 'audio') {
+            await startAudioRecording();
+          } else if (currentMediaType === 'video') {
+            await startVideoRecording();
+          }
+        }
+      }
+
+
+      function stopRecording() {
+        if (!mediaRecorder || mediaRecorder.state === "inactive") {
+          return;
+        }
+
+        isRecording = false;
+        mediaRecorder.stop();
+        currentStream.getTracks().forEach(track => track.stop());
+        currentStream = null;
+
+        captureActionText.textContent = (currentMediaType === 'image' ? 'Take Photo' : 'Start Recording');
+        captureButton.style.backgroundColor = '#4CAF50';
+        previewText.textContent = `⏹️ Recording stopped, preview ready`;
+      }
+
+      // (Implement startAudioRecording, startVideoRecording, startImageCapture, stopRecording, captureImageFrame, dataURLtoBlob as before, with error handling)
+
+      function getDataForPayload() {
+        if (currentMediaType === 'text') {
+          const textBox = document.getElementById('secret-text');
+          if (!textBox.classList.contains('hidden') && textBox.value.trim()) {
+            return { type: 'text', data: textBox.value.trim() };
+          }
+          const fileInput = document.getElementById('text-file');
+          if (fileInput.files.length > 0) {
+            return { type: 'file', data: fileInput.files[0] };
+          }
+          return null;
+        } else {
+          const isCaptureHidden = document.getElementById('capture-group').classList.contains('hidden');
+          if (isCaptureHidden) {
+            const fileInput = document.getElementById('media-file-input');
+            if (fileInput.files.length > 0) {
+              return { type: 'file', data: fileInput.files[0] };
+            }
+          } else {
+            if (capturedBlobs[currentMediaType]) {
+              const type = currentMediaType;
+              return {
+                type: 'blob',
+                data: capturedBlobs[type],
+                name: `covert_${type}.${type === 'image' ? 'png' : 'webm'}`
+              };
+            }
+          }
+          return null;
+        }
+      }
+
+      function blobToFile(blob, filename, mimeType) {
+        return new File([blob], filename, { type: mimeType });
+      }
+
+
+      async function prepareAndUploadData() {
+        console.log("🚀 prepareAndUploadData triggered");
+        statusMessageEl.style.color = '#7fffd4';
+        statusMessageEl.textContent = 'Creating payload...';
+        downloadContainer.classList.add('hidden');
+        stopMediaStream();
+
+        const payloadData = getDataForPayload();
+        let customTimer = parseInt(document.getElementById('custom-timer').value.trim(), 10);
+
+        // Set your desired min and max
+        const MIN_TIMER = 5;
+        const MAX_TIMER = 30;
+
+        if (isNaN(customTimer) || customTimer < MIN_TIMER || customTimer > MAX_TIMER) {
+          statusMessageEl.style.color = '#ffaa00';
+          statusMessageEl.textContent = `ERROR: Custom timer must be between ${MIN_TIMER} and ${MAX_TIMER} seconds.`;
+          setTimeout(() => statusMessageEl.textContent = '. . .', 3000);
+          return;
+        }
+
+
+        const extMap = {
+          audio: { ext: 'webm', mime: 'audio/webm' },
+          video: { ext: 'webm', mime: 'video/webm' },
+          image: { ext: 'png', mime: 'image/png' }
+        };
+
+
+
+        if (!payloadData) {
+          statusMessageEl.style.color = '#ffaa00';
+          statusMessageEl.textContent = 'ERROR: No data detected. Please enter text or select/capture media.';
+          console.warn("⚠️ No payload data found");
+          setTimeout(() => statusMessageEl.textContent = '. . .', 3000);
+          return;
+        }
+
+        const formData = new FormData();
+
+
+        if (payloadData.type === 'text') {
+          formData.append('covert_message', payloadData.data);
+        } else {
+          let file = payloadData.data;
+
+          // If blob, rename it as .mp3/.mp4
+          if (payloadData.type === 'blob') {
+            const extMap = {
+              audio: { ext: 'mp3', mime: 'audio/mp3' },
+              video: { ext: 'mp4', mime: 'video/mp4' },
+              image: { ext: 'png', mime: 'image/png' }
+            };
+            const { ext, mime } = extMap[currentMediaType];
+            file = blobToFile(file, `covert_${currentMediaType}.${ext}`, mime);
+          }
+
+          formData.append('media_file', file, file.name);
+        }
+
+
+
+        formData.append('message_type', currentMediaType);
+        formData.append('custom_timer', customTimer);
+
+        document.getElementById('create-payload-btn').disabled = true;
+        document.getElementById('create-payload-btn').style.opacity = 0.6;
+        statusMessageEl.textContent = 'Transmitting payload to backend server...';
+
+        try {
+          const response = await fetch('/api/create-payload', {
+            method: 'POST',
+            body: formData
+          });
+
+          console.log("📤 Request sent, awaiting response...");
+          if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`HTTP ${response.status}: ${text}`);
+          }
+
+          const result = await response.json();
+          console.log("📥 Backend responded:", result);
+
+          if (result.success) {
+            statusMessageEl.style.color = '#4CAF50';
+            statusMessageEl.textContent = `SUCCESS: ${result.message}`;
+            if (result.download_url) {
+              downloadLink.href = result.download_url;
+              downloadLink.download = result.filename || "payload_download";
+              downloadContainer.classList.remove('hidden');
+            }
+          } else {
+            throw new Error(result.message || 'Backend indicated failure');
+          }
+        } catch (error) {
+          console.error("🚨 Error during upload:", error);
+          statusMessageEl.style.color = '#d32f2f';
+          statusMessageEl.textContent = `ERROR: ${error.message}`;
+        } finally {
+          document.getElementById('create-payload-btn').disabled = false;
+          document.getElementById('create-payload-btn').style.opacity = 1;
+        }
+      }
+
+      async function startAudioRecording() {
+        try {
+          currentStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(currentStream);
+          recordedChunks = [];
+
+          mediaRecorder.ondataavailable = e => {
+            if (e.data.size > 0) recordedChunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            const audioBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+            capturedBlobs.audio = audioBlob;
+
+            const audioPreview = document.getElementById('media-audio-preview');
+            audioPreview.src = URL.createObjectURL(audioBlob);
+            audioPreview.classList.remove('hidden');
+
+            previewText.textContent = "🎤 Audio Recorded!";
+          };
+
+
+          mediaRecorder.start();
+          isRecording = true;
+          captureActionText.textContent = "Stop Recording";
+          captureButton.style.backgroundColor = "#e53935";
+          previewText.textContent = "🎙️ Recording audio...";
+        } catch (err) {
+          console.error("🎤 Error accessing microphone:", err);
+          previewText.textContent = "❌ Could not access microphone.";
+        }
+      } 
+      
+      async function startVideoRecording() {
+        try {
+          currentStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+          mediaVideoFeed.srcObject = currentStream;
+          mediaVideoFeed.style.display = "block";
+          previewText.style.display = "none";
+
+          mediaRecorder = new MediaRecorder(currentStream);
+          recordedChunks = [];
+
+          mediaRecorder.ondataavailable = e => {
+            if (e.data.size > 0) recordedChunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = () => {
+            const videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+            capturedBlobs.video = videoBlob;
+
+            const videoPreview = document.getElementById('media-video-feed');
+            videoPreview.srcObject = null;
+            videoPreview.src = URL.createObjectURL(videoBlob);
+            videoPreview.controls = true;
+            videoPreview.muted = false;
+            videoPreview.style.display = "block";
+
+            previewText.style.display = "none";
+            previewText.textContent = "🎬 Video Recorded!";
+          };
+
+
+          mediaRecorder.start();
+          isRecording = true;
+          captureActionText.textContent = "Stop Recording";
+          captureButton.style.backgroundColor = "#e53935";
+          previewText.textContent = "📹 Recording video...";
+        } catch (err) {
+          console.error("📷 Error accessing camera:", err);
+          previewText.textContent = "❌ Could not access camera.";
+        }
+      }
+
+      async function startImageCapture() {
+        try {
+          currentStream = await navigator.mediaDevices.getUserMedia({ video: true });
+          mediaVideoFeed.srcObject = currentStream;
+          mediaVideoFeed.style.display = "block";
+          previewText.style.display = "none";
+
+          // Wait a moment to let the camera settle
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Take snapshot
+          captureImageFrame();
+
+          // Stop stream after capturing
+          stopMediaStream();
+          previewText.textContent = "📸 Image Captured!";
+        } catch (err) {
+          console.error("📸 Error accessing camera:", err);
+          previewText.textContent = "❌ Could not access camera.";
+        }
+      }
+
+      function captureImageFrame() {
+        const video = mediaVideoFeed;
+        const canvas = mediaCanvas;
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.style.display = "block";
+
+        canvas.toBlob(blob => {
+          capturedBlobs.image = blob;
+        }, "image/png");
+      }
+
+
+
+      window.onload = () => {
+        updateFormInputs('text');
+        console.log("🔄 Initialized page, default to text mode");
+      };
+    </script>
+  </body>
+  </html>

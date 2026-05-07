@@ -1,0 +1,64 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.env/
+.venv/
+
+# =========================
+# FastAPI / Uvicorn
+# =========================
+*.log
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Uploaded / Generated Files
+# =========================
+uploads/
+payload/
+zips/
+
+# Keep folders but ignore contents
+!uploads/.gitkeep
+!payload/.gitkeep
+!zips/.gitkeep
+
+# =========================
+# Secrets / Keys
+# =========================
+*.key
+secret.key
+
+# =========================
+# Build / Distribution
+# =========================
+build/
+dist/
+*.egg-info/
+
+# =========================
+# Environment Variables
+# =========================
+.env
+
+# =========================
+# Database
+# =========================
+*.db
+*.sqlite3
