@@ -36,7 +36,7 @@ SpyPop_scratch/
 ## 1. Clone Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/jasvant0020/spypop_3.0.git
 cd SpyPop_scratch
 ```
 
